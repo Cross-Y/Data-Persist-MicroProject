@@ -11,29 +11,17 @@ public class MainManager : MonoBehaviour
     public Rigidbody Ball;
 
     public Text ScoreText;
-    public Text BestScore;
     public GameObject GameOverText;
-
-    public string namePlayer;
-    public string bestPlayer;
-    public int maxScore;
-    public int score;
-
+    
     private bool m_Started = false;
-    public int m_Points;
+    private int m_Points;
     
     private bool m_GameOver = false;
 
+    
     // Start is called before the first frame update
     void Start()
     {
-        DataManager.Instance.Load();
-
-        bestPlayer = DataManager.Instance.bestPlayer;
-        maxScore = DataManager.Instance.maxScore;
-        ScoreUpdate(bestPlayer, maxScore);
-        namePlayer = DataManager.Instance.namePlayer;
-
         const float step = 0.6f;
         int perLine = Mathf.FloorToInt(4.0f / step);
         
@@ -48,20 +36,10 @@ public class MainManager : MonoBehaviour
                 brick.onDestroyed.AddListener(AddPoint);
             }
         }
-
-        if(DataManager.Instance.bestPlayer == null)
-        {
-            DataManager.Instance.bestPlayer = "None";
-        }
-    }
-
-    public void ScoreUpdate(string name, int score)
-    {
-        BestScore.text = "Best Score: " + name + " : " + score;     
     }
 
     private void Update()
-    { 
+    {
         if (!m_Started)
         {
             if (Input.GetKeyDown(KeyCode.Space))
@@ -82,30 +60,17 @@ public class MainManager : MonoBehaviour
                 SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
             }
         }
-
-        ScoreText.text = $"Score : {m_Points}" + " : " + DataManager.Instance.namePlayer;
     }
 
     void AddPoint(int point)
     {
         m_Points += point;
-        ScoreText.text = $"Score : {m_Points}" + " : " + DataManager.Instance.namePlayer;
+        ScoreText.text = $"Score : {m_Points}";
     }
 
     public void GameOver()
     {
         m_GameOver = true;
         GameOverText.SetActive(true);
-
-        if(DataManager.Instance.maxScore < m_Points)
-        {
-            DataManager.Instance.bestPlayer = DataManager.Instance.namePlayer;
-            DataManager.Instance.maxScore = m_Points;
-
-            ScoreUpdate(DataManager.Instance.bestPlayer, DataManager.Instance.maxScore);
-
-            DataManager.Instance.Save();
-        }   
     }
-
 }
